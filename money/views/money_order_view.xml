@@ -83,7 +83,8 @@
                             </tree>
                             </field>
                         </group>
-                    </group>                  
+                    </group>  
+                    <button name="ReloadSourceids" states="draft" string="载入结算单" type="object" class="oe_highlight"/>                
                     <button name="write_off_reset" states="draft" string="核销行金额清零" type="object" class="oe_right"/>
                     <field name="source_ids" groups='money.reconcile_groups'>
 						<tree string="Source Order Lines" create="false" editable="bottom">

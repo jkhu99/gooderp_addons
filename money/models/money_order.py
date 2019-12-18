@@ -197,6 +197,22 @@ class MoneyOrder(models.Model):
             source.this_reconcile = 0
         return True
 
+    @api.multi
+    def ReloadSourceids(self):
+        """
+        调出合作伙伴未核销的结算单
+        :return:
+        """        
+        if not self.partner_id:
+            return {}
+        if self.state != 'draft':
+            raise ValueError(u'已确认的单据不能执行这个操作')
+        source_lines = []
+
+        for invoice in self.env['money.invoice'].search(self._get_invoice_search_list()):
+            source_lines.append(self._get_source_line(invoice))
+        self.source_ids = source_lines
+
     @api.onchange('date')
     def onchange_date(self):
         """
@@ -215,7 +231,6 @@ class MoneyOrder(models.Model):
         :param invoice: money_invoice对象
         :return: dict
         """
-        print("hahaha",invoice.ref)
         return {
             'name': invoice.id,
             'ref': invoice.ref,
