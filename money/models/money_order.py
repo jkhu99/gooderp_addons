@@ -215,9 +215,10 @@ class MoneyOrder(models.Model):
         :param invoice: money_invoice对象
         :return: dict
         """
-
+        print("hahaha",invoice.ref)
         return {
             'name': invoice.id,
+            'ref': invoice.ref,
             'category_id': invoice.category_id.id,
             'amount': invoice.amount,
             'date': invoice.date,
@@ -861,6 +862,8 @@ class SourceOrderLine(models.Model):
                            copy=False, required=True,
                            ondelete='cascade',
                            help=u'待核销行对应的结算单')
+    ref = fields.Char(string=u'客户订单号', readonly=True,
+                       help=u'客户订单号，创建销售订单时建立')
     category_id = fields.Many2one('core.category', string=u'类别',
                                   required=True, ondelete='restrict',
                                   help=u'待核销行类别：采购 或者 销售等')

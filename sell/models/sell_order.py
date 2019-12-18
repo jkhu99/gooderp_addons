@@ -244,7 +244,15 @@ class SellOrder(models.Model):
                 return {'domain': {'address_id': [('id', 'in', address_list)]}}
             else:
                 self.address_id = False
-
+				
+        '''计算销售单据的业务员，不允许修改'''
+        if self.partner_id:
+            if self.partner_id.responsible_id:
+                self.user_id = self.partner_id.responsible_id
+            else:
+                self.user_id = self._uid
+        self.approve_uid = self._uid
+		
     @api.onchange('discount_rate', 'line_ids')
     def onchange_discount_rate(self):
         '''当优惠率或销货订单行发生变化时，单据优惠金额发生变化'''
@@ -300,11 +308,17 @@ class SellOrder(models.Model):
                 raise UserError(u'外贸免税！')
         if not self.bank_account_id and self.pre_receipt:
             raise UserError(u'预付款不为空时，请选择结算账户！')
+        '''计算销售单据的业务员，不允许修改'''
+        if self.partner_id:
+            if self.partner_id.responsible_id:
+                self.user_id = self.partner_id.responsible_id
+            else:
+                self.user_id = self._uid
+        self.approve_uid = self._uid			
         # 销售预收款生成收款单
         money_order = self.generate_receipt_order()
         self.sell_generate_delivery()
 
-        self.approve_uid = self._uid
         self.write({
             'money_order_id': money_order and money_order.id,
             'state': 'done',  # 为保证审批流程顺畅，否则，未审批就可审核

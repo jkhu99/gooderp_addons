@@ -231,6 +231,7 @@ class BuyReceipt(models.Model):
             'partner_id': partner_id.id,
             'category_id': category_id.id,
             'date': date,
+            'ref': self.order_id.ref,
             'amount': amount,
             'reconciled': 0,
             'to_reconcile': amount,
